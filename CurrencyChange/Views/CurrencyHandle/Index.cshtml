@@ -1,0 +1,52 @@
+﻿@model IEnumerable<CurrencyChange.Models.Currency>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="form-group">
+    <div class="form-group">
+        <label>Amount:</label>
+        <input type="number" id="amount" name="amout" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Select currency:</label>
+        <select class="form-control" id="value">
+            @foreach (var item in Model)
+            {
+                <option value="@item.Id">@Html.DisplayFor(modelItem => item.Id)</option>
+            }
+        </select>
+    </div>
+    <button class="btn btn-success">Change</button>
+    <hr />
+    <div>Result: <span id="result" style="font-weight:bold;">0</span> VNĐ</div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('button').click(function () {
+                var amount = $('#amount').val();
+                var id = $('#value').val();
+                if (amount != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: "/_api/v1/Currencies",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            "id": id,
+                            "ratio": amount
+                        }),
+                        success: function (data, textStatus, jQxhr) {
+                            $('#result').html(data);
+                        },
+                        error: function (jqXhr, textStatus, errorThrown) {
+                            console.log(errorThrown);
+                        }
+                    });
+                } else {
+                    alert("Vui lòng nhập thông tin!");
+                }
+            });
+        });
+    </script>
+}
